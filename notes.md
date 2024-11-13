@@ -9,6 +9,9 @@
 - Enable experimental Docker
   - `echo "{\"experimental\": true}" >> /etc/docker/daemon.json` (For Docker Desktop via GUI)
   - restart Docker
+- Kubernetes (my fork is part of this repo)
+- [kind](https://kind.sigs.k8s.io/)
+- Tools to [build](https://github.com/kubernetes/community/blob/master/contributors/devel/development.md#building-kubernetes-with-docker) Kubernetes
 
 ## Progress
 
@@ -26,3 +29,17 @@ docker start --checkpoint checkpoint1 c3e
 ```
 
 ### Checkpoint and restore Kubernetes pod
+
+- Build local version of Kubernetes
+  - `kind build node-image /home/jan/DP/kubernetes`
+- Create the cluster
+  - `kind create cluster --image kindest/node:latest`
+- Load the image for `counter` container (built from `cr-docker` folder)
+  - `kind load docker-image counter:latest`
+- Create the pod with this container
+  - `kubectl apply -f cr-kubernetes/counter-pod.yaml`
+- Ensure the counter is running
+  - `kubectl logs counter`
+- Now try to follow this [guide](https://kubernetes.io/blog/2022/12/05/forensic-container-checkpointing-alpha/)
+
+!!! Need to setup kubernetes to use cri-o runtime, as checkpointing is not support on containerd!!!
