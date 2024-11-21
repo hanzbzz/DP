@@ -7,4 +7,4 @@ spec:
   - name: counter-container
     image: counter:latest
     # use local image
-    imagePullPolicy: IfNotPresent
+    imagePullPolicy: Never

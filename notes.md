@@ -30,16 +30,29 @@ docker start --checkpoint checkpoint1 c3e
 
 ### Checkpoint and restore Kubernetes pod
 
-- Build local version of Kubernetes
-  - `kind build node-image /home/jan/DP/kubernetes`
-- Create the cluster
-  - `kind create cluster --image kindest/node:latest`
-- Load the image for `counter` container (built from `cr-docker` folder)
-  - `kind load docker-image counter:latest`
-- Create the pod with this container
-  - `kubectl apply -f cr-kubernetes/counter-pod.yaml`
-- Ensure the counter is running
-  - `kubectl logs counter`
-- Now try to follow this [guide](https://kubernetes.io/blog/2022/12/05/forensic-container-checkpointing-alpha/)
+The below instructions are only relevant for my local development environment. If you have Kubernetes cluster with containerd 2.0.0, only the last step is needed(probably)
 
-!!! Need to setup kubernetes to use cri-o runtime, as checkpointing is not support on containerd!!!
+- It seems that containerd supports checkpoint/restore with Kubernetes only since version 2.0.0 [reddit](https://www.reddit.com/r/kubernetes/comments/1em8bed/checkpointcontainer_not_implemented/?rdt=38992)
+- So the solution should be to build `kind` base image with version 2.0.0
+- However this version is not supported by kind [github](https://github.com/kubernetes-sigs/kind/issues/3768)
+- To load local images into kind with containerd 2.0.0, the import command in kind binary needs to be edited [github](https://github.com/containerd/runwasi/issues/579)
+- CRIU needs to be installed in the base image of kind
+- All of the above changes are already done in my fork of kind repository.
+- Build custom version of kind `cd kind && go install . && cd -`
+- Build base image of kind `cd kind/images/base && make quick && cd -`
+- Build node image for kind. Note that the path to  kubernetes repo needs to be absolute and the base image argument should be the image built in previous step
+
+```bash
+kind build node-image /home/jan/DP/kubernetes  --base-image gcr.io/k8s-staging-kind/base:v20241121-74acdf74-dirty
+```
+
+- Create kind cluster with the built node image `kind create cluster --image kindest/node:latest --config cr-kubernetes/cluster.yaml`
+- Load the docker image build previously into the cluster `kind load docker-image counter:latest`
+- Run the pod with this image `kubectl apply -f cr-kubernetes/counter-pod.yaml`
+- Perform the checkpoint
+
+```bash
+docker exec -it kind-control-plane curl -X POST -k --cert /etc/kubernetes/pki/apiserver-kubelet-client.crt --key /etc/kubernetes/pki/apiserver-kubelet-client.key "https://localhost:10250/checkpoint/default/counter/counter-container"
+```
+
+- Now the tar archive representing the running container is stored in the kind-control-plane container.

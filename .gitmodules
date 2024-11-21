@@ -1,3 +1,6 @@
 [submodule "kubernetes"]
 	path = kubernetes
 	url = https://github.com/hanzbzz/kubernetes.git
+[submodule "kind"]
+	path = kind
+	url = https://github.com/hanzbzz/kind.git
