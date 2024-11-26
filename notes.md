@@ -56,3 +56,8 @@ docker exec -it kind-control-plane curl -X POST -k --cert /etc/kubernetes/pki/ap
 ```
 
 - Now the tar archive representing the running container is stored in the kind-control-plane container.
+
+### Adding checkpoint endpoint to Kubernetes api
+
+- Main source [github](https://github.com/kubernetes/kubernetes/pull/97194)
+- cri remote runtime from [this](https://github.com/kubernetes/kubernetes/pull/97194/commits/022347fb893cba09a7a92129bae0cb9c47d495b4) commit was moved to `staging/src/k8s.io/cri-client`
