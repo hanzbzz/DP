@@ -37,8 +37,8 @@ The below instructions are only relevant for my local development environment. I
 - However this version is not supported by kind [github](https://github.com/kubernetes-sigs/kind/issues/3768)
 - To load local images into kind with containerd 2.0.0, the import command in kind binary needs to be edited [github](https://github.com/containerd/runwasi/issues/579)
 - CRIU needs to be installed in the base image of kind
-- All of the above changes are already done in my fork of kind repository.
-- Build custom version of kind `cd kind && go install . && cd -`
+- All of the above changes are already done in my fork of kind repository. Run `git submodule update --init` in the root directory to pull the submodules.
+- Build custom version of kind `cd kind && git checkout containerd_2.0.0_support && go install . && cd -`
 - Build base image of kind `cd kind/images/base && make quick && cd -`
 - Build node image for kind. Note that the path to  kubernetes repo needs to be absolute and the base image argument should be the image built in previous step
 
@@ -61,3 +61,4 @@ docker exec -it kind-control-plane curl -X POST -k --cert /etc/kubernetes/pki/ap
 
 - Main source [github](https://github.com/kubernetes/kubernetes/pull/97194)
 - cri remote runtime from [this](https://github.com/kubernetes/kubernetes/pull/97194/commits/022347fb893cba09a7a92129bae0cb9c47d495b4) commit was moved to `staging/src/k8s.io/cri-client`
+- api strucutre [github](https://github.com/kubernetes/kubernetes/tree/master/staging/src/k8s.io/api) - TODO: try to curl different endpoints nad see the response/api structure
