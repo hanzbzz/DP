@@ -64,10 +64,6 @@ docker exec -it kind-control-plane curl -X POST -k --cert /etc/kubernetes/pki/ap
 - api strucutre [github](https://github.com/kubernetes/kubernetes/tree/master/staging/src/k8s.io/api)
 - Kubernetes supports checkpointing of a single container, but the above pull request implements checkpointing of pods
 - follow the code at /home/jan/DP/kubernetes/pkg/registry/core/rest/storage_core.go to see how http requests are made
-- 04.12.2024 - seems to somehow work for now
-  - start proxy for the Kubernetes api - `kubectl proxy`
-  - requests using curl need to make a connection to websocket, using some specific headers
-  ```bash
-  curl 'localhost:8001/api/v1/namespaces/default/pods/counter2/checkpoint/?container=counter-container'\
-  -k -X POST --include --no-buffer --header "Connection: Upgrade"
-  ```
+- It was necessary to change the request method on the kubelet checkpoint api from POST to GET. Not sure what implications this has
+- start proxy to the Kubernetes API with `kubectl proxy`
+- `curl 'localhost:8001/api/v1/namespaces/default/pods/counter/checkpoint?container=counter-container'`
