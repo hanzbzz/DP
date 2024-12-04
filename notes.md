@@ -68,7 +68,6 @@ docker exec -it kind-control-plane curl -X POST -k --cert /etc/kubernetes/pki/ap
   - start proxy for the Kubernetes api - `kubectl proxy`
   - requests using curl need to make a connection to websocket, using some specific headers
   ```bash
-  curl 'localhost:8001/api/v1/namespaces/default/pods/counter2/checkpoint/?container=counter-container-1' \
-  -k -X POST --include --no-buffer --header "Connection: Upgrade" --header "Upgrade: websocket" \
-  --header "Sec-WebSocket-Key: NVwjmQUcWCenfWu98asDmg==" --header "Sec-WebSocket-Version: 13"
+  curl 'localhost:8001/api/v1/namespaces/default/pods/counter2/checkpoint/?container=counter-container'\
+  -k -X POST --include --no-buffer --header "Connection: Upgrade"
   ```
