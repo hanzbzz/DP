@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: counter2
+spec:
+  containers:
+  - name: counter-container
+    image: counter:latest
+    # use local image
+    imagePullPolicy: Never
+  - name: counter-container-2
+    image: counter:latest
+    # use local image
+    imagePullPolicy: Never

@@ -62,5 +62,13 @@ docker exec -it kind-control-plane curl -X POST -k --cert /etc/kubernetes/pki/ap
 - Main source [github](https://github.com/kubernetes/kubernetes/pull/97194)
 - cri remote runtime from [this](https://github.com/kubernetes/kubernetes/pull/97194/commits/022347fb893cba09a7a92129bae0cb9c47d495b4) commit was moved to `staging/src/k8s.io/cri-client`
 - api strucutre [github](https://github.com/kubernetes/kubernetes/tree/master/staging/src/k8s.io/api)
-- Kubernetes supports checkpointing of a single container, but the above pull reuqest implements checkpointing of pods
+- Kubernetes supports checkpointing of a single container, but the above pull request implements checkpointing of pods
 - follow the code at /home/jan/DP/kubernetes/pkg/registry/core/rest/storage_core.go to see how http requests are made
+- 04.12.2024 - seems to somehow work for now
+  - start proxy for the Kubernetes api - `kubectl proxy`
+  - requests using curl need to make a connection to websocket, using some specific headers
+  ```bash
+  curl 'localhost:8001/api/v1/namespaces/default/pods/counter2/checkpoint/?container=counter-container-1' \
+  -k -X POST --include --no-buffer --header "Connection: Upgrade" --header "Upgrade: websocket" \
+  --header "Sec-WebSocket-Key: NVwjmQUcWCenfWu98asDmg==" --header "Sec-WebSocket-Version: 13"
+  ```
