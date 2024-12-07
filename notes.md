@@ -67,3 +67,5 @@ docker exec -it kind-control-plane curl -X POST -k --cert /etc/kubernetes/pki/ap
 - It was necessary to change the request method on the kubelet checkpoint api from POST to GET. Not sure what implications this has
 - start proxy to the Kubernetes API with `kubectl proxy`
 - `curl 'localhost:8001/api/v1/namespaces/default/pods/counter/checkpoint?container=counter-container'`
+- GET/POST request for checkpoint
+- `curl 'localhost:8001/api/v1/namespaces/default/pods/counter/checkpoint' -X POST -d '{"container":"counter-container"}' -H "Content-type: application/json"`
