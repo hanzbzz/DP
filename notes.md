@@ -69,3 +69,8 @@ docker exec -it kind-control-plane curl -X POST -k --cert /etc/kubernetes/pki/ap
 - `curl 'localhost:8001/api/v1/namespaces/default/pods/counter/checkpoint?container=counter-container'`
 - GET/POST request for checkpoint
 - `curl 'localhost:8001/api/v1/namespaces/default/pods/counter/checkpoint' -X POST -d '{"container":"counter-container"}' -H "Content-type: application/json"`
+
+### Adding option to kill container after checkpoint
+
+- Needs update of containerd code [github](https://github.com/containerd/containerd)
+- The code to pass options to criu is at `containerd/internal/cri/server/container_checkpoint_linux.go`
