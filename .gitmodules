@@ -6,4 +6,4 @@
 	url = https://github.com/hanzbzz/kind.git
 [submodule "containerd"]
 	path = containerd
-	url = ./containerd
+	url = https://github.com/hanzbzz/containerd.git
