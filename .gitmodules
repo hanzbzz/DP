@@ -7,3 +7,9 @@
 [submodule "containerd"]
 	path = containerd
 	url = https://github.com/hanzbzz/containerd.git
+[submodule "runc"]
+	path = runc
+	url = https://github.com/hanzbzz/runc.git
+[submodule "criu"]
+	path = criu
+	url = https://github.com/hanzbzz/criu.git
