@@ -8,7 +8,57 @@
 | Runc               | https://github.com/opencontainers/runc   | release-1.2      | https://github.com/hanzbzz/runc/       | release-1.2-brazda     |
 | Kind (development) | https://github.com/kubernetes-sigs/kind  | v0.25.0          | https://github.com/hanzbzz/kind/       | v0.25.0-brazda         |
 
-### Setup
+
+### Setup Rancher/RKE2
+1. Clone this repository `git clone https://github.com/hanzbzz/DP.git`
+2. Pull source code for submodules `git submodule update --init --recursive`
+3. Install [RKE2](https://docs.rke2.io/install/quickstart)
+4. Build containerd `cd containerd && make && cd -`
+
+    4.1 Backup old containerd binaries ```mv /var/lib/rancher/rke2/bin/containerd /var/lib/rancher/rke2/bin/containerd.old && mv /var/lib/rancher/rke2/bin/containerd-shim-runc-v2 /var/lib/rancher/rke2/bin/containerd-shim-runc-v2.old && mv /var/lib/rancher/rke2/bin/ctr /var/lib/rancher/rke2/bin/ctr.old```
+    
+    4.2 Copy newly built binaries ```cp containerd/bin/containerd /var/lib/rancher/rke2/bin/containerd  && 
+cp containerd/bin/ctr /var/lib/rancher/rke2/bin/ctr && 
+cp containerd/bin/containerd-shim-runc-v2 /var/lib/rancher/rke2/bin/containerd-shim-runc-v2```
+5. Build runc `cd runc && make && cd -`
+
+    5.1 Replace runc binary `mv /var/lib/rancher/rke2/bin/runc /var/lib/rancher/rke2/bin/runc.old && cp runc/runc /var/lib/rancher/rke2/bin/runc`
+6. Build kubernetes `cd kubernetes/ && build/run.sh make && cd -`
+
+    6.1 Replace kubelet binary `mv /var/lib/rancher/rke2/bin/kubelet /var/lib/rancher/rke2/bin/kubelet.old && cp kubernetes/_output/dockerized/bin/linux/amd64/kubelet /var/lib/rancher/rke2/bin/kubelet`
+
+    6.2 (Optional) We will also need to use the newly built image for kube-apiserver, but I already uploaded the latest version to dockerhub, so you don't need to do this
+
+        6.2.1 Build the release images `kubernetes/build/release-images.sh`
+
+        6.2.1 Load the docker image from tar `docker image load -i kubernetes/_output/release-images/amd64/kube-apiserver.tar`
+        
+        6.2.2 Tag the image `docker tag <LOADED_IMAGE_NAME> <TAG>`
+
+        6.2.3 Push the image `docker push <TAG>`
+
+7. Build criu `cd criu && make && cd -`
+
+    7.1 Copy criu binary `cp criu/criu/criu /var/lib/rancher/rke2/bin/`
+
+8. Create `/etc/rancher/rke2/config.yaml` file with the contents below, potentially overwriting the `kube-apiserver-image` with the one you build in step 6.2
+    ```kube-controller-manager-arg:
+    - "feature-gates=ContainerCheckpoint=true"
+
+    kube-apiserver-arg:
+    - "feature-gates=ContainerCheckpoint=true"
+
+    kubelet-arg:
+    - "feature-gates=ContainerCheckpoint=true"
+
+    kube-apiserver-image: "hzbzzz/kube-apiserver-checkpoint"
+    kube-apiserver-extra-mount: "/var/lib/rancher/rke2/bin/kubectl:/usr/local/bin/kubectl:ro"
+    ```
+
+9. Restart rke-server service `sudo systemctl restart rke2-server.service`
+
+
+### Setup Kubernetes in Docker
 
 1. Clone this repository `git clone https://github.com/hanzbzz/DP.git`
 2. Pull source code for submodules `git submodule update --init --recursive`
@@ -30,7 +80,7 @@
 
 ## URL
 
-The url looks like this `localhost:8001/api/v1/namespaces/<NAMESPACE>/pods/<POD>/checkpoint`
+The url looks like this `<APISEVER_HOST>:6443/api/v1/namespaces/<NAMESPACE>/pods/<POD>/checkpoint`
 where `<POD>` is the name of the we want to checkpoint and `<NAMESPACE>` is the namespace where it's located
 
 ## Params
