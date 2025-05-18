@@ -90,5 +90,6 @@ The request accepts following parametrs as items in the JSON request
 | Name             | Type   | Default | Values             | Note                                                                                                    |
 |------------------|--------|---------|--------------------|---------------------------------------------------------------------------------------------------------|
 | leaveRunning     | bool   | true    | true/false         | When set to false, will delete the pod after checkpoint is finished                                     |
-| encrypt          | bool   | false   | true/false         | Controls if resulting checkpoint should be encrypted. When true, encryptionSecret needs to be specified |
+| encrypt          | bool   | true   | true/false         | Controls if resulting checkpoint should be encrypted. When true, encryptionSecret needs to be specified |
 | encryptionSecret | string | ""      | Secret of type TLS | Kubernetes secret of type TLS. The certificate will be used to encrypt the checkpoint                   |
+| timeout | integer | 34      | Integer | Time after which the request will time out.                   |
