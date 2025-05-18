@@ -53,11 +53,6 @@ kubelet-arg:
   - "feature-gates=ContainerCheckpoint=true"
 
 kube-apiserver-image: "hzbzzz/kube-apiserver-checkpoint"
-kube-apiserver-extra-mount:
-  - "/var/lib/rancher/rke2/bin/kubectl:/usr/local/bin/kubectl:ro"
-  - "/var/lib/rancher/rke2/server/tls/client-kube-apiserver.key:/etc/kubernetes/pki/apiserver-kubelet-client.key:ro"
-  - "/var/lib/rancher/rke2/server/tls/client-kube-apiserver.crt:/etc/kubernetes/pki/apiserver-kubelet-client.crt:ro"
-  - "/var/lib/rancher/rke2/server/tls/server-ca.crt:/etc/kubernetes/pki/ca.crt:ro"
 ```
 
 9. Restart rke-server service `sudo systemctl restart rke2-server.service`
