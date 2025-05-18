@@ -93,3 +93,4 @@ The request accepts following parametrs as items in the JSON request
 | encrypt          | bool   | true   | true/false         | Controls if resulting checkpoint should be encrypted. When true, encryptionSecret needs to be specified |
 | encryptionSecret | string | ""      | Secret of type TLS | Kubernetes secret of type TLS. The certificate will be used to encrypt the checkpoint                   |
 | timeout | integer | 34      | Integer | Time after which the request will time out.                   |
+| container | string | "" | Container name | If Pod has more contaienrs, this can specify the one to be checkpointed. Default is the first in the Pod specification |
